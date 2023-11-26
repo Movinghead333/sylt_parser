@@ -116,8 +116,17 @@ class SyltLyricsData {
         nextTimestamp = Utility.timestampInMsToString(lyricsLines[i + 1].$2);
       }
 
+      String lyricsLine = lyricsLines[i].$1;
+
+      // If the line is empty than fill it with a blank space, in order to not
+      // have any blank lines apart from those at the end of each SRT lyrics
+      // line. This helps to avoid errors made by parsers of this format.
+      if (lyricsLine.isEmpty) {
+        lyricsLine = ' ';
+      }
+
       String newLine =
-          '${i + 1}\r\n00:$timestamp --> 00:$nextTimestamp\r\n${lyricsLines[i].$1}\r\n\r\n';
+          '${i + 1}\r\n00:$timestamp --> 00:$nextTimestamp\r\n$lyricsLine\r\n\r\n';
       lyrics += newLine;
     }
 
