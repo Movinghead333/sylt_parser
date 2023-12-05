@@ -1,3 +1,8 @@
+/// The [TextEncoding] determines how the text is encoded within the mp3 file.
+///
+/// The [TextEncoding] can be one byte per character which is indicated
+/// by [TextEndcoding.iso8859_1] or two bytes per character when
+/// [TextEncoding.unicode] is used.
 enum TextEncoding {
   iso8859_1(rawByte: 0),
   unicode(rawByte: 1);
@@ -18,6 +23,13 @@ enum TextEncoding {
   }
 }
 
+/// The [TimestampFormat] determines how the timestap byte data is to be
+/// interpreted.
+///
+/// The option [TimestampFormat.absTime32BitMpegFrames] indicates that the
+/// timestamp is 4 bytes wide an stores the offset in time-units of mpeg frames.
+/// The option [TimestampFormat.absTime32BitMilliseconds] also uses 4 bytes for
+/// storing a timestamp but uses milliseconds as a unit instead.
 enum TimestampFormat {
   absTime32BitMpegFrames(rawByte: 1),
   absTime32BitMilliseconds(rawByte: 2);
@@ -38,6 +50,10 @@ enum TimestampFormat {
   }
 }
 
+/// The [ContentType] serves as a means to more clearly describe the data stored
+/// within the SYLT-frame.
+///
+/// This enums defines all content types described within the mp3 standard.
 enum ContentType {
   other(
     rawByte: 0,

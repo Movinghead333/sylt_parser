@@ -1,4 +1,5 @@
 import 'package:sylt_parser/src/enums.dart';
+import 'package:sylt_parser/src/exceptions.dart';
 import 'package:sylt_parser/src/sylt_lyrics_data.dart';
 import 'package:sylt_parser/src/sylt_lyrics_from_mp3_parser.dart';
 import 'package:test/test.dart';
@@ -65,6 +66,25 @@ void main() {
         ('test', 1500),
         ('lyrics', 2000),
       ]);
+    });
+
+    test(
+        'parseMp3BytesToSyltLyricsData throws execption on bytes without sylt frame',
+        () {
+      // Arrange
+      // Any bytes that definitely do not represent a valid SYLT frame
+      List<int> syltFrameBytes = [0, 0, 0, 0, 0, 0];
+
+      // Act
+
+      // Assert
+      expect(
+        () => SyltLyricsFromMp3Parser.parseMp3BytesToSyltLyricsData(
+            syltFrameBytes),
+        throwsA(
+          isA<NoSyltFrameFoundException>(),
+        ),
+      );
     });
   });
 }

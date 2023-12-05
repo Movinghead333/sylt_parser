@@ -1,7 +1,7 @@
 name: sylt_parser
 description: A library for parsing timecoded lyrics data from SYLT-frames encoded in mp3 files. (SYnchronized Lyrics/Text)
 version: 0.1.1
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/Movinghead333/sylt_parser
 
 environment:
   sdk: ^3.1.4

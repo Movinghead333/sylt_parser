@@ -1,9 +1,18 @@
 import 'package:sylt_parser/src/enums.dart';
 
+import 'exceptions.dart';
 import 'sylt_lyrics_data.dart';
 import 'utility.dart';
 
+/// This class provides static functionality for parsing the SYLT data within
+/// mp3 files into an object containing the time-coded lyrcis data.
 class SyltLyricsFromMp3Parser {
+  /// Parses the time-coded lyrics data within an mp3 file represented as a byte
+  /// list.
+  ///
+  /// The whole file is search for the startdata that indicates the beginning
+  /// of a SYLT frame. When the starting offset is found the data in the frame
+  /// is parsed into a [SyltLyricsData] object.
   static SyltLyricsData parseMp3BytesToSyltLyricsData(List<int> mp3Bytes) {
     int syltFrameStartingOffset = _findSyltFrameStartingOffset(mp3Bytes);
 
@@ -123,27 +132,6 @@ class SyltLyricsFromMp3Parser {
     return (lyricsLine, timestamp);
   }
 
-  static String _lineDataToLrcString(List<int> lineData) {
-    int l = lineData.length;
-    int timeStampInMs = Utility.fourBytesToInt(
-        lineData[l - 4], lineData[l - 3], lineData[l - 2], lineData[l - 1]);
-
-    String text = '';
-    for (int i = 0; i < l - 4; i++) {
-      text += String.fromCharCode(lineData[i]);
-    }
-
-    int timeStampInSeconds = timeStampInMs ~/ 1000;
-    int timeStampInMinutes = timeStampInSeconds ~/ 60;
-
-    String milliSeconds = (timeStampInMs % 1000).toString().padLeft(3, '0');
-    String seconds = (timeStampInSeconds % 60).toString().padLeft(2, '0');
-    String minutes = (timeStampInMinutes % 60).toString().padLeft(2, '0');
-    String formattedTimeStamp = '[$minutes:$seconds,$milliSeconds]';
-
-    return '$formattedTimeStamp: $text';
-  }
-
   /// Determine the byte offset where the sylt header starts
   static int _findSyltFrameStartingOffset(List<int> mp3Bytes) {
     int s = 83; // S
@@ -151,7 +139,7 @@ class SyltLyricsFromMp3Parser {
     int l = 76; // L
     int t = 84; // T
 
-    int syltHeaderStartingOffset = -1;
+    int? syltHeaderStartingOffset;
 
     for (int i = 0; i < mp3Bytes.length - 3; i++) {
       if (mp3Bytes[i] == s &&
@@ -161,6 +149,10 @@ class SyltLyricsFromMp3Parser {
         syltHeaderStartingOffset = i;
         break;
       }
+    }
+
+    if (syltHeaderStartingOffset == null) {
+      throw NoSyltFrameFoundException();
     }
 
     return syltHeaderStartingOffset;
